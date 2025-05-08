@@ -1,0 +1,91 @@
+const Bus = require('../models/bus');
+const Trajet = require('../models/trajets');
+const Chauffeur = require('../models/chauffeur');
+const Controleur = require('../models/controler');
+
+
+
+
+const createBus    = async (req, res) => {
+    try { const bus = new Bus(req.body); res.status(201).json(await bus.save()); }
+    catch (err) { res.status(400).json({ error: err.message }); }
+  };
+  const getBuses     = async (req, res) => {
+    try { res.json(await Bus.find().populate('driver')); }
+    catch (err) { res.status(500).json({ error: err.message }); }
+  };
+  const getBusById   = async (req, res) => {
+    try {
+      const bus = await Bus.findById(req.params.id).populate('driver');
+      if (!bus) return res.status(404).json({ error: 'Bus non trouvé' });
+      res.json(bus);
+    } catch (err) { res.status(500).json({ error: err.message }); }
+  };
+
+  const createChauffeur  = async (req, res) => {
+    try { const c = new Chauffeur(req.body); res.status(201).json(await c.save()); }
+    catch (err) { res.status(400).json({ error: err.message }); }
+  };
+  const getChauffeurs    = async (req, res) => {
+    try { res.json(await Chauffeur.find()); }
+    catch (err) { res.status(500).json({ error: err.message }); }
+  };
+  const getChauffeurById = async (req, res) => {
+    try {
+      const c = await Chauffeur.findById(req.params.id);
+      if (!c) return res.status(404).json({ error: 'Chauffeur non trouvé' });
+      res.json(c);
+    } catch (err) { res.status(500).json({ error: err.message }); }
+  };
+
+
+  const createTrajet   = async (req, res) => {
+    try { const t = new Trajet(req.body); res.status(201).json(await t.save()); }
+    catch (err) { res.status(400).json({ error: err.message }); }
+  };
+  const getTrajets     = async (req, res) => {
+    try { res.json(await Trajet.find().populate('bus')); }
+    catch (err) { res.status(500).json({ error: err.message }); }
+  };
+  const getTrajetById  = async (req, res) => {
+    try {
+      const t = await Trajet.findById(req.params.id).populate('bus');
+      if (!t) return res.status(404).json({ error: 'Trajet non trouvé' });
+      res.json(t);
+    } catch (err) { res.status(500).json({ error: err.message }); }
+  };
+
+
+  const createControleur   = async (req, res) => {
+    try { const c = new Controleur(req.body); res.status(201).json(await c.save()); }
+    catch (err) { res.status(400).json({ error: err.message }); }
+  };
+  const getControleurs     = async (req, res) => {
+    try { res.json(await Controleur.find().populate('assignedTrips')); }
+    catch (err) { res.status(500).json({ error: err.message }); }
+  };
+  const getControleurById  = async (req, res) => {
+    try {
+      const c = await Controleur.findById(req.params.id).populate('assignedTrips');
+      if (!c) return res.status(404).json({ error: 'Contrôleur non trouvé' });
+      res.json(c);
+    } catch (err) { res.status(500).json({ error: err.message }); }
+  };
+
+
+  module.exports = {
+    createBus,
+    getBuses,
+    getBusById,
+    createChauffeur,
+    getChauffeurs,
+    getChauffeurById,
+    createTrajet,
+    getTrajets,
+    getTrajetById,
+    createControleur,
+    getControleurs,
+    getControleurById
+
+
+}
