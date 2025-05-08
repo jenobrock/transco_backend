@@ -18,6 +18,17 @@ const vendre = async (req, res) => {
     }
 }
 
+const vendreSync = async (req, res) => {
+    try {
+        const salesArray = req.body; 
+
+        const inserted = await Sale.insertMany(salesArray, { ordered: true });
+        return res.status(201).json(inserted);
+    } catch (err) {
+        console.error(err);
+        res.status(400).json({ error: 'Erreur lors de la création de la vente' });
+    }
+}
 const createBus = async (req, res) => {
     try { const bus = new Bus(req.body); res.status(201).json(await bus.save()); }
     catch (err) { res.status(400).json({ error: err.message }); }
@@ -106,7 +117,8 @@ module.exports = {
     createControleur,
     getControleurs,
     getControleurById,
-    vendre
+    vendre,
+    vendreSync
 
 
 }
