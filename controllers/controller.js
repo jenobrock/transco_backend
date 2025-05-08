@@ -22,20 +22,37 @@ const vendre = async (req, res) => {
 const ventePerBus = async (req, res) => {
     try {
         const result = await Sale.aggregate([
+            // 1) Sommes par bus
             {
               $group: {
                 _id: '$bus',
                 totalAmount:   { $sum: '$amount'   },
                 totalQuantity: { $sum: '$quantity' },
-                busName : '$bus.numberPlate'
               }
             },
+            // 2) Lookup pour récupérer la plaque dans la collection "buses"
+            {
+              $lookup: {
+                from:         'buses',       // vérifie bien le nom de ta collection
+                localField:   '_id',         // ObjectId du bus
+                foreignField: '_id',
+                as:           'busInfo'
+              }
+            },
+            // 3) Unwind pour passer de tableau à objet
+            {
+              $unwind: {
+                path: '$busInfo',
+                preserveNullAndEmptyArrays: true
+              }
+            },
+            // 4) Projection finale incluant numberPlate
             {
               $project: {
-                _id: 0,
-                busId: '$_id',
-                busName:'$numberPlate',
-                totalAmount: 1,
+                _id:           0,
+                busId:         '$_id',
+                numberPlate:   '$busInfo.numberPlate',
+                totalAmount:   1,
                 totalQuantity: 1
               }
             }
