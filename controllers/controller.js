@@ -21,44 +21,47 @@ const vendre = async (req, res) => {
 
 const ventePerBus = async (req, res) => {
     try {
-        const result = await Sale.aggregate([
-            // 1) Sommes par bus
-            {
-              $group: {
-                _id: '$bus',
-                totalAmount:   { $sum: '$amount'   },
-                totalQuantity: { $sum: '$quantity' },
-              }
-            },
-            // 2) Lookup pour récupérer la plaque dans la collection "buses"
-            {
-              $lookup: {
-                from:         'buses',       // vérifie bien le nom de ta collection
-                localField:   '_id',         // ObjectId du bus
-                foreignField: '_id',
-                as:           'busInfo'
-              }
-            },
-            // 3) Unwind pour passer de tableau à objet
-            {
-              $unwind: {
-                path: '$busInfo',
-                preserveNullAndEmptyArrays: true
-              }
-            },
-            // 4) Projection finale incluant numberPlate
-            {
-              $project: {
-                _id:           0,
-                busId:         '$_id',
-                numberPlate:   '$busInfo.numberPlate',
-                totalAmount:   1,
-                totalQuantity: 1
-              }
-            }
-          ]);
+        // Récupère le nom physique de la collection 'Bus'
+        const busesColl = Bus.collection.collectionName; // généralement 'buses'
 
-        return res.json(result);
+        const summary = await Sale.aggregate([
+            // 1) Somme des montants et quantités par bus
+            {
+                $group: {
+                    _id: '$bus',
+                    totalAmount: { $sum: '$amount' },
+                    totalQuantity: { $sum: '$quantity' }
+                }
+            },
+            // 2) Lookup pour joindre les infos du bus
+            {
+                $lookup: {
+                    from: busesColl,
+                    localField: '_id',
+                    foreignField: '_id',
+                    as: 'busInfo'
+                }
+            },
+            // 3) Unwind pour transformer l'array en objet (même si vide)
+            {
+                $unwind: {
+                    path: '$busInfo',
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            // 4) Projection finale : busId, plaque et sommes
+            {
+                $project: {
+                    _id: 0,
+                    busId: '$_id',
+                    numberPlate: '$busInfo.numberPlate',
+                    totalAmount: 1,
+                    totalQuantity: 1
+                }
+            }
+        ]);
+
+        return res.json(summary);
     } catch (err) {
         console.error(err);
         return res.status(500).json({ message: err.message });
@@ -85,7 +88,7 @@ const getBuses = async (req, res) => {
     try {
         res.json(await Bus.find().populate(['driver', 'controler', 'trajet']))
 
-        ;
+            ;
     }
     catch (err) { res.status(500).json({ error: err.message }); }
 };
