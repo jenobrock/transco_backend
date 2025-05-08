@@ -4,7 +4,19 @@ const Chauffeur = require('../models/chauffeur');
 const Controleur = require('../models/controler');
 
 
+const Sale = require('../models/sale');
 
+const vendre = async (req, res) => {
+    try {
+        const { amount, quantity, bus, controler, trajet } = req.body;
+        const sale = new Sale({ amount, quantity, bus, controler, trajet });
+        await sale.save();
+        res.status(201).json({ message: 'Vente créée avec succès', sale });
+    } catch (err) {
+        console.error(err);
+        res.status(400).json({ error: 'Erreur lors de la création de la vente' });
+    }
+}
 
 const createBus = async (req, res) => {
     try { const bus = new Bus(req.body); res.status(201).json(await bus.save()); }
@@ -93,7 +105,8 @@ module.exports = {
     getTrajetById,
     createControleur,
     getControleurs,
-    getControleurById
+    getControleurById,
+    vendre
 
 
 }
