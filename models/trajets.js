@@ -8,4 +8,4 @@ const trajetSchema = new mongoose.Schema({
 
   });
   const Trajet = mongoose.model('Trajet', trajetSchema);
-  
+  module.exports = Trajet;

@@ -9,3 +9,4 @@ const controleurSchema = new mongoose.Schema({
     phone: { type: String }, 
 });
 const Controleur = mongoose.model('Controleur', controleurSchema);
+module.exports = Controleur;

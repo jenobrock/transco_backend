@@ -9,4 +9,4 @@ const chauffeurSchema = new mongoose.Schema({
     role: { type: String }, 
   });
   const Chauffeur = mongoose.model('Chauffeur', chauffeurSchema);
-  
+  module.exports = Chauffeur;
