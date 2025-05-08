@@ -33,6 +33,7 @@ const ventePerBus = async (req, res) => {
               $project: {
                 _id: 0,
                 busId: '$_id',
+                busName:'$numberPlate',
                 totalAmount: 1,
                 totalQuantity: 1
               }
