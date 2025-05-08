@@ -18,9 +18,48 @@ const vendre = async (req, res) => {
     }
 }
 
+
+const ventePerBus = async (req, res) => {
+    try {
+        const result = await Sale.aggregate([
+             {
+                $group: {
+                    _id: '$bus',
+                    totalAmount: { $sum: '$amount' },
+                    totalQuantity: { $sum: '$quantity' },
+                }
+            },
+             {
+                $lookup: {
+                    from: 'buses',       // nom de la collection Mongo (en minuscules + pluriel)
+                    localField: '_id',      // champ groupé
+                    foreignField: '_id',      // clé primaire de Bus
+                    as: 'busInfo'
+                }
+            },
+             { $unwind: '$busInfo' },
+             {
+                $project: {
+                    _id: 0,
+                    busId: '$_id',
+                    bus: '$busInfo',       // contient tout l’objet Bus
+                    totalAmount: 1,
+                    totalQuantity: 1
+                }
+            }
+        ]);
+
+        return res.json(result);
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: err.message });
+    }
+}
+
+
 const vendreSync = async (req, res) => {
     try {
-        const salesArray = req.body; 
+        const salesArray = req.body;
 
         const inserted = await Sale.insertMany(salesArray, { ordered: true });
         return res.status(201).json(inserted);
@@ -34,9 +73,11 @@ const createBus = async (req, res) => {
     catch (err) { res.status(400).json({ error: err.message }); }
 };
 const getBuses = async (req, res) => {
-    try { res.json(await Bus.find().populate(['driver','controler','trajet']))
-    
-    ; }
+    try {
+        res.json(await Bus.find().populate(['driver', 'controler', 'trajet']))
+
+        ;
+    }
     catch (err) { res.status(500).json({ error: err.message }); }
 };
 const getBusById = async (req, res) => {
@@ -51,11 +92,12 @@ const createChauffeur = async (req, res) => {
     try {
         const c = new Chauffeur(req.body);
         await c.save()
-        res.status(201).json({"message": "Chauffeur créé avec succès", chauffeur: c });
+        res.status(201).json({ "message": "Chauffeur créé avec succès", chauffeur: c });
     }
-    catch (err) { 
+    catch (err) {
         console.log(err);
-        res.status(400).json({ error: err.message }); }
+        res.status(400).json({ error: err.message });
+    }
 };
 const getChauffeurs = async (req, res) => {
     try { res.json(await Chauffeur.find()); }
@@ -118,7 +160,8 @@ module.exports = {
     getControleurs,
     getControleurById,
     vendre,
-    vendreSync
+    vendreSync,
+    ventePerBus
 
 
 }

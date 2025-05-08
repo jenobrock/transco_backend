@@ -27,5 +27,6 @@ router.get("/controler/get", controller.getControleurById);
 
 router.post("/vendre/create", controller.vendre);
 router.post("/vendre/multi", controller.vendreSync);
+router.get("/vendre/bus", controller.ventePerBus);
 
 module.exports = router;
