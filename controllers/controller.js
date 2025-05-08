@@ -22,32 +22,22 @@ const vendre = async (req, res) => {
 const ventePerBus = async (req, res) => {
     try {
         const result = await Sale.aggregate([
-             {
-                $group: {
-                    _id: '$bus',
-                    totalAmount: { $sum: '$amount' },
-                    totalQuantity: { $sum: '$quantity' },
-                }
+            {
+              $group: {
+                _id: '$bus',
+                totalAmount:   { $sum: '$amount'   },
+                totalQuantity: { $sum: '$quantity' },
+              }
             },
-             {
-                $lookup: {
-                    from: 'buses',       // nom de la collection Mongo (en minuscules + pluriel)
-                    localField: '_id',      // champ groupé
-                    foreignField: '_id',      // clé primaire de Bus
-                    as: 'busInfo'
-                }
-            },
-             { $unwind: '$busInfo' },
-             {
-                $project: {
-                    _id: 0,
-                    busId: '$_id',
-                    bus: '$busInfo',       // contient tout l’objet Bus
-                    totalAmount: 1,
-                    totalQuantity: 1
-                }
+            {
+              $project: {
+                _id: 0,
+                busId: '$_id',
+                totalAmount: 1,
+                totalQuantity: 1
+              }
             }
-        ]);
+          ]);
 
         return res.json(result);
     } catch (err) {
