@@ -27,6 +27,7 @@ const ventePerBus = async (req, res) => {
                 _id: '$bus',
                 totalAmount:   { $sum: '$amount'   },
                 totalQuantity: { $sum: '$quantity' },
+                busName : '$numberPlate'
               }
             },
             {
