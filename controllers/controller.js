@@ -50,7 +50,7 @@ const createTrajet = async (req, res) => {
     catch (err) { res.status(400).json({ error: err.message }); }
 };
 const getTrajets = async (req, res) => {
-    try { res.json(await Trajet.find().populate('bus')); }
+    try { res.json(await Trajet.find()); }
     catch (err) { res.status(500).json({ error: err.message }); }
 };
 const getTrajetById = async (req, res) => {
