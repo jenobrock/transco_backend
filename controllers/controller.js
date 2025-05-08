@@ -11,7 +11,9 @@ const createBus = async (req, res) => {
     catch (err) { res.status(400).json({ error: err.message }); }
 };
 const getBuses = async (req, res) => {
-    try { res.json(await Bus.find().populate('driver')); }
+    try { res.json(await Bus.find().populate(['driver','controler','trajet']))
+    
+    ; }
     catch (err) { res.status(500).json({ error: err.message }); }
 };
 const getBusById = async (req, res) => {
