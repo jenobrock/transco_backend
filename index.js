@@ -1,5 +1,5 @@
 var express = require("express");
-// const bcrypt = require('bcrypt')
+const bcrypt = require('bcrypt')
 const mongoose = require("mongoose");
 const session = require("express-session");
 const morgan = require ('morgan');
