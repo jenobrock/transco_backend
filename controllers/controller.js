@@ -28,7 +28,9 @@ const createChauffeur = async (req, res) => {
         await c.save()
         res.status(201).json({"message": "Chauffeur créé avec succès", chauffeur: c });
     }
-    catch (err) { res.status(400).json({ error: err.message }); }
+    catch (err) { 
+        console.log(err);
+        res.status(400).json({ error: err.message }); }
 };
 const getChauffeurs = async (req, res) => {
     try { res.json(await Chauffeur.find()); }
