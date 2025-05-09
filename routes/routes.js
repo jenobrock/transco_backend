@@ -8,6 +8,7 @@ var controller = require("../controllers/controller");
 router.post("/bus/create", controller.createBus);
 router.get("/bus/list", controller.getBuses);
 router.get("/bus/get", controller.getBusById);
+router.get("/bus/controler", controller.getBusByControleur);
 
 //chauffeur
 router.post("/driver/create", controller.createChauffeur);
@@ -28,6 +29,8 @@ router.get("/controler/get", controller.getControleurById);
 router.post("/vendre/create", controller.vendre);
 router.post("/vendre/multi", controller.vendreSync);
 router.get("/vendre/bus", controller.ventePerBus);
+
+
 
 router.post("/auth/login", controller.login);
 

@@ -164,23 +164,25 @@ const getControleurById = async (req, res) => {
 
 
 
-const login = (req, res) => {
+const login = async (req, res) => {
     //login
     const phone = req.body.phone;
     const pass = req.body.pass;
 
     Chauffeur.findOne({ phone: phone })
-        .then((user1) => {
+        .then(async (user1) => {
             if (!user1) {
                 console.log("User doesn't exist ...");
 
                 return res.status(404).json({ code: "404" });
             }
-            bcrypt.compare(pass, user1.password).then((data) => {
+            bcrypt.compare(pass, user1.password).then(async (data) => {
                 if (data) {
                     console.log("User connected");
-
-                    return res.status(200).json({ code: "200", data: user1 });
+                    const bus = await Bus.findById({
+                        controler: user1._id
+                    }).populate('trajet');
+                    return res.status(200).json({ code: "200", data: user1, bus: bus });
 
                 } else {
                     console.log("User password wrong ...");
@@ -194,6 +196,17 @@ const login = (req, res) => {
         });
 
 }
+
+const getBusByControleur = async (req, res) => {
+
+    try {
+        const bus = await Bus.find({ controler: req.query.id }).populate('trajet');
+        if (!bus) return res.status(404).json({ error: 'Aucun bus trouvé pour ce contrôleur' });
+        res.json(bus);
+    }
+    catch (err) {
+        res.status(500).json({ error: err.message });
+    }}
 
 
 module.exports = {
@@ -211,8 +224,9 @@ module.exports = {
     getControleurById,
     vendre,
     vendreSync,
-    ventePerBus, 
-    login
+    ventePerBus,
+    login,
+    getBusByControleur
 
 
 }
