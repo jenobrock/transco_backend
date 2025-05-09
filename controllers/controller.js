@@ -22,8 +22,7 @@ const vendre = async (req, res) => {
 const ventes = async (req, res) => {
     try {
          const sale = await  Sale.find().populate(['bus', 'controler', 'trajet']);
-        await sale.save();
-        res.status(201).json({data: sale });
+         res.status(201).json({data: sale });
     } catch (err) {
         console.error(err);
         res.status(400).json({ error: 'Erreur lors de la création de la vente' });
