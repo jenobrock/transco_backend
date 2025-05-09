@@ -3,7 +3,7 @@ const { Schema } = mongoose;
 
 const chauffeurSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  phone: { type: String },
+  phone: { type: String, required: true,unique: true },
 
   dateOfBirth: { type: Date, required: true },
   placeOfBirth: { type: String, required: true },
