@@ -211,7 +211,8 @@ module.exports = {
     getControleurById,
     vendre,
     vendreSync,
-    ventePerBus
+    ventePerBus, 
+    login
 
 
 }
