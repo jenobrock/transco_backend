@@ -2,6 +2,7 @@ const Bus = require('../models/bus');
 const Trajet = require('../models/trajets');
 const Chauffeur = require('../models/chauffeur');
 const Controleur = require('../models/controler');
+const bcrypt = require('bcrypt')
 
 
 const Sale = require('../models/sale');
@@ -106,7 +107,7 @@ const createChauffeur = async (req, res) => {
         // Hash the password before saving
         const salt = await bcrypt.genSalt(10);
         c.password = await bcrypt.hash(c.password, salt);
-        
+
         await c.save()
         res.status(201).json({ "message": "Chauffeur créé avec succès", chauffeur: c });
     }
