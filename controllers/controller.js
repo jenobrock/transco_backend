@@ -103,6 +103,10 @@ const getBusById = async (req, res) => {
 const createChauffeur = async (req, res) => {
     try {
         const c = new Chauffeur(req.body);
+        // Hash the password before saving
+        const salt = await bcrypt.genSalt(10);
+        c.password = await bcrypt.hash(c.password, salt);
+        
         await c.save()
         res.status(201).json({ "message": "Chauffeur créé avec succès", chauffeur: c });
     }
@@ -156,6 +160,39 @@ const getControleurById = async (req, res) => {
         res.json(c);
     } catch (err) { res.status(500).json({ error: err.message }); }
 };
+
+
+
+const login = (req, res) => {
+    //login
+    const phone = req.body.phone;
+    const pass = req.body.pass;
+
+    Chauffeur.findOne({ phone: phone })
+        .then((user1) => {
+            if (!user1) {
+                console.log("User doesn't exist ...");
+
+                return res.status(404).json({ code: "404" });
+            }
+            bcrypt.compare(pass, user1.password).then((data) => {
+                if (data) {
+                    console.log("User connected");
+
+                    return res.status(200).json({ code: "200", data: user1 });
+
+                } else {
+                    console.log("User password wrong ...");
+
+                    return res.status(403).json({ code: "403" });
+
+                }
+            });
+        }).catch((err) => {
+            console.log(err);
+        });
+
+}
 
 
 module.exports = {

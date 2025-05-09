@@ -6,6 +6,7 @@ const morgan = require ('morgan');
 var cors = require("cors");
 var bodyParser = require("body-parser");
  const multer = require("multer");
+ const bcrypt = require('bcrypt');
 
  
 
