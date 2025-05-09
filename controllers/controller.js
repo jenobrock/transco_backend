@@ -179,8 +179,9 @@ const login = async (req, res) => {
             bcrypt.compare(pass, user1.password).then(async (data) => {
                 if (data) {
                     console.log("User connected");
+                    const user2 = await Chauffeur.findById(user1._id);
                     const bus = await Bus.findById({
-                        controler: user1._id
+                        controler: user2._id
                     }).populate('trajet');
                     return res.status(200).json({ code: "200", data: user1, bus: bus });
 
